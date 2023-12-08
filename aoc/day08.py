@@ -1,4 +1,5 @@
 import itertools
+import math
 
 from aoc.utils import read_input
 
@@ -37,18 +38,21 @@ def part2(day_input: list[str]) -> int:
 
     directions, map = make_directions_and_map(day_input)
     currents = [pos for pos in map.keys() if pos.endswith('A')]
-    for instruction in itertools.cycle(directions):
-        steps += 1
-        idx = 0 if instruction == 'L' else 1
-        currents = [map[current][idx] for current in currents]
 
-        if all(current.endswith('Z') for current in currents):
-            break
+    cycle_steps = []
+    for current in currents:
+        steps = 0
+        for instruction in itertools.cycle(directions):
+            steps += 1
+            idx = 0 if instruction == 'L' else 1
 
-        if any(current.endswith('Z') for current in currents):
-            print(f'{steps=}')
+            current = map[current][idx]
+            if current.endswith('Z'):
+                break
 
-    return steps
+        cycle_steps.append(steps)
+
+    return math.lcm(*cycle_steps)
 
 
 if __name__ == '__main__':
